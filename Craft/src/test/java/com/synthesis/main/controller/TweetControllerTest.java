@@ -34,6 +34,7 @@ import org.springframework.web.context.WebApplicationContext;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.synthesis.controller.TweetController;
 import com.synthesis.entity.Tweet;
 import com.synthesis.entity.User;
@@ -147,7 +148,59 @@ public class TweetControllerTest {
 
 	}
 
-	
+	 @Test
+	 public void testFeedTweets() throws Exception
+	 {
+		 //User U3
+		 User user1 = new User();
+		 user1.setUserId("U3");
+		 
+		 // User U4
+		 User user2 = new User();
+		 user2.setUserId("U4");
+		 
+		 Tweet mockTweet1 = new Tweet();
+		 mockTweet1.setTweetId(1);
+		 mockTweet1.setTweetText("helloU3");
+		 mockTweet1.setUserId(user1);
+		 Calendar cal = Calendar.getInstance(); // creates calendar
+		 cal.setTime(new Date()); // sets calendar time/date
+		 cal.add(Calendar.HOUR_OF_DAY, -1); // adds one hour
+		  cal.getTime();
+		mockTweet1.setCreatedDate(cal.getTime());
+		 
+		 Tweet mockTweet2 = new Tweet();
+		 mockTweet2.setTweetId(2);
+		 mockTweet2.setTweetText("helloU4");
+		 mockTweet2.setUserId(user2);
+		 mockTweet2.setCreatedDate(new Date());
+		  
+		 List<Tweet> list = new ArrayList<Tweet>();
+		 list.add(mockTweet1);
+		 list.add(mockTweet2);
+		 
+		 MockHttpServletRequest mockHttpRequest = new MockHttpServletRequest();
+		 mockHttpRequest.addHeader("Authorization", "Basic VTE6MTIzNA==");
+		 
+		 String inputInJson = this.mapToJson(list);
+		 String URI = "/tweets/feed";
+		 
+		 Mockito.when(tweetControllerMock.getFeedTweets(Mockito.any(MockHttpServletRequest.class)))
+			.thenReturn(new ResponseEntity<List<Tweet>>(list, HttpStatus.OK));
+
+		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).accept(MediaType.APPLICATION_JSON)
+				.contentType(MediaType.APPLICATION_JSON)
+				.header("Authorization", "Basic VTE6MTIzNA==");
+		
+		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
+		MockHttpServletResponse response = result.getResponse();
+		
+		String outputInJson = response.getContentAsString();
+		
+		assertThat(outputInJson).isEqualTo(inputInJson);
+		assertEquals(HttpStatus.OK.value(), response.getStatus());
+		 
+	 }
 	
 	
 
@@ -156,7 +209,7 @@ public class TweetControllerTest {
 	 */
 	private String mapToJson(Object object) throws JsonProcessingException {
 		ObjectMapper objectMapper = new ObjectMapper();
-
+		objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS); 
 		return objectMapper.writeValueAsString(object);
 	}
 

@@ -1,6 +1,5 @@
 package com.synthesis.service.impl;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -21,7 +20,17 @@ public class FollowerServiceImpl implements FollowerService {
 	@Override
 	public Follower updateFollower(Follower follower) {
 		
-		return repository.save(follower);
+		String newFollwing = follower.getFollowing();
+		Follower oldFollower =repository.findByFollowerName(follower.getFollowerName() );
+		if(null!=oldFollower)
+		{
+			String oldFollowing= oldFollower.getFollowing();
+			newFollwing = oldFollowing+","+newFollwing;
+			oldFollower.setFollowing(newFollwing);
+			return repository.save (oldFollower);
+			
+		}
+		return repository.save (follower);
 
 	}
 
