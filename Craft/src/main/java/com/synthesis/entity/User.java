@@ -1,6 +1,8 @@
 package com.synthesis.entity;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -18,11 +20,15 @@ public class User {
 	private String paswd;
 
 	private String email;
+	
+	
 
+	
 	/*
-	 * @OneToMany(mappedBy = "userId", cascade = CascadeType.ALL) private
-	 * List<Tweet> tweets;
+	 * @OneToMany(mappedBy = "User") private List<Tweet> tweets = new
+	 * ArrayList<Tweet>();
 	 */
+	 
 
 	public String getUserId() {
 		return userId;

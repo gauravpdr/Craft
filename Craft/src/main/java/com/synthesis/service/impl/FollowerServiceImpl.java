@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.synthesis.entity.Follower;
+import com.synthesis.entity.User;
 import com.synthesis.repository.FollowerRepository;
 import com.synthesis.service.FollowerService;
 
@@ -26,7 +27,8 @@ public class FollowerServiceImpl implements FollowerService {
 
 	
 	  @Override
-	public List<String> getListOfFollowing(String followerName) {
+	public List<String> getListOfFollowing(User followerName) {
+
 		Follower follower = repository.findByFollowerName(followerName);
 		if (null != follower) {
 			List<String> followingNames = Arrays.asList(follower.getFollowing().split(","));

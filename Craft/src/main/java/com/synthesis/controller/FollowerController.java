@@ -1,6 +1,6 @@
 package com.synthesis.controller;
 
-import java.util.ArrayList;
+
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +20,7 @@ import com.synthesis.entity.User;
 import com.synthesis.exception.UserNotFoundException;
 import com.synthesis.service.FollowerService;
 
+
 /**
  * @author Gaurav Pidyar Controller class for handling all the requests related
  *         to modification of the following list of a follower or user
@@ -31,6 +32,9 @@ public class FollowerController extends BaseController {
 
 	@Autowired
 	FollowerService followerService;
+	
+	
+
 
 	@PutMapping(value = "/follower", produces = "application/json")
 	public ResponseEntity<Follower> addToFollowingList(@Valid @RequestBody Follower follower,
@@ -39,7 +43,7 @@ public class FollowerController extends BaseController {
 		User user = validateUser(request);
 		if (null != user) {
 
-			follower.setFollowerName(user.getUserId());
+			follower.setFollowerName(user);
 			Follower updatedfollower = followerService.updateFollower(follower);
 			return new ResponseEntity<Follower>(updatedfollower, HttpStatus.OK);
 		} else {
@@ -53,7 +57,7 @@ public class FollowerController extends BaseController {
 
 		User user = validateUser(request);
 		if (null != user) {
-			List<String> list = followerService.getListOfFollowing(user.getUserId());
+			List<String> list = followerService.getListOfFollowing(user);
 			if (null != list) {
 				return new ResponseEntity<>(list, HttpStatus.OK);
 			} else
@@ -63,4 +67,7 @@ public class FollowerController extends BaseController {
 		return null;
 
 	}
+	
+	 
+
 }

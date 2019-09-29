@@ -32,6 +32,7 @@ public class Tweet {
 	private Date createdDate;
 
 	@ManyToOne
+	@JoinColumn(name="userId")
 	private User userId;
 
 	public int getTweetId() {

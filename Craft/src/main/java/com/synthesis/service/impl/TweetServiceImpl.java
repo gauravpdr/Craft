@@ -44,7 +44,7 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<Tweet> getFeedTweets(User user) {
 
-		List<String> listOfFollowing = followerService.getListOfFollowing(user.getUserId());
+		List<String> listOfFollowing = followerService.getListOfFollowing(user);
 		if (null!=listOfFollowing) {
 			ArrayList<User> listOfUserFollowing = new ArrayList<User>();
 			for(String userId : listOfFollowing)

@@ -1,9 +1,18 @@
 package com.synthesis.entity;
 
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.OneToOne;
+
 
 @Entity
 public class Follower {
@@ -13,9 +22,12 @@ public class Follower {
 	@Column(name = "follower_id")
 	private int id;
 
-	private String followerName;
-
-	private String following;
+	@OneToOne
+	@JoinColumn(name="followed_by")
+	private User followerName;
+ 
+	
+	private String following ;
 
 	public Follower() {
 	}
@@ -55,11 +67,11 @@ public class Follower {
 		return true;
 	}
 
-	public String getFollowerName() {
+	public User getFollowerName() {
 		return followerName;
 	}
 
-	public void setFollowerName(String followerName) {
+	public void setFollowerName(User followerName) {
 		this.followerName = followerName;
 	}
 
