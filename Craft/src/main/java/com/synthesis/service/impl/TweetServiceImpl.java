@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.synthesis.entity.Follower;
 import com.synthesis.entity.Tweet;
 import com.synthesis.entity.User;
 import com.synthesis.repository.TweetRepository;
@@ -44,20 +45,19 @@ public class TweetServiceImpl implements TweetService {
 	@Override
 	public List<Tweet> getFeedTweets(User user) {
 
-		List<String> listOfFollowing = followerService.getListOfFollowing(user);
+		List<Follower> listOfFollowing = followerService.getListOfFollowing(user);
 		if (null!=listOfFollowing) {
 			ArrayList<User> listOfUserFollowing = new ArrayList<User>();
-			for(String userId : listOfFollowing)
+			for(Follower tempUserId : listOfFollowing)
 			{
-				User tempUser = new User();
-				tempUser.setUserId(userId);
-				listOfUserFollowing.add(tempUser);
+				
+				listOfUserFollowing.add(tempUserId.getFollowed());
 				
 			}
 			
 			
 					
-			return repository.findFirst100ByUserIdInOrderByCreatedDateDesc(listOfUserFollowing);
+			return repository.findFirst100ByUserInOrderByCreatedDateDesc(listOfUserFollowing);
 		}
 
 		else {

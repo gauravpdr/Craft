@@ -2,7 +2,6 @@ package com.synthesis.entity;
 
 import java.util.Date;
 
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -33,7 +32,7 @@ public class Tweet {
 
 	@ManyToOne
 	@JoinColumn(name="userId")
-	private User userId;
+	private User user;
 
 	public int getTweetId() {
 		return tweetId;
@@ -59,12 +58,12 @@ public class Tweet {
 		this.createdDate = createdDate;
 	}
 
-	public User getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
 
-	public void setUserId(User userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 
 	

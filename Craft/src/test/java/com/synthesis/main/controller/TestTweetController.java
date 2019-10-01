@@ -24,6 +24,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
+import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -35,6 +36,7 @@ import org.springframework.web.context.WebApplicationContext;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.synthesis.bean.TweetBean;
 import com.synthesis.controller.TweetController;
 import com.synthesis.entity.Tweet;
 import com.synthesis.entity.User;
@@ -44,9 +46,9 @@ import com.synthesis.service.TweetService;
 import com.synthesis.service.UserService;
 import com.synthesis.service.impl.UserServiceImpl;
 
-@RunWith(SpringRunner.class)
+@RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(value = TweetController.class, secure = false)
-public class TweetControllerTest {
+public class TestTweetController {
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -57,7 +59,7 @@ public class TweetControllerTest {
 	@Test
 	public void testPostTweet() throws Exception {
 
-		Tweet mockTweet = new Tweet();
+		TweetBean mockTweet = new TweetBean();
 		mockTweet.setTweetId(1);
 		mockTweet.setTweetText("hello");
 		MockHttpServletRequest mockHttpRequest = new MockHttpServletRequest();
@@ -69,7 +71,7 @@ public class TweetControllerTest {
 		String URI = "/tweets/postTweet";
 
 		Mockito.when(tweetControllerMock.postTweet(Mockito.any(Tweet.class), Mockito.any(MockHttpServletRequest.class)))
-				.thenReturn(mockTweet);
+				.thenReturn(new ResponseEntity<TweetBean>( mockTweet,HttpStatus.OK));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(URI).accept(MediaType.APPLICATION_JSON)
 				.content(inputInJson).contentType(MediaType.APPLICATION_JSON)
@@ -162,7 +164,7 @@ public class TweetControllerTest {
 		 Tweet mockTweet1 = new Tweet();
 		 mockTweet1.setTweetId(1);
 		 mockTweet1.setTweetText("helloU3");
-		 mockTweet1.setUserId(user1);
+		 mockTweet1.setUser(user1);
 		 Calendar cal = Calendar.getInstance(); // creates calendar
 		 cal.setTime(new Date()); // sets calendar time/date
 		 cal.add(Calendar.HOUR_OF_DAY, -1); // adds one hour
@@ -172,7 +174,7 @@ public class TweetControllerTest {
 		 Tweet mockTweet2 = new Tweet();
 		 mockTweet2.setTweetId(2);
 		 mockTweet2.setTweetText("helloU4");
-		 mockTweet2.setUserId(user2);
+		 mockTweet2.setUser(user2);
 		 mockTweet2.setCreatedDate(new Date());
 		  
 		 List<Tweet> list = new ArrayList<Tweet>();
@@ -185,8 +187,11 @@ public class TweetControllerTest {
 		 String inputInJson = this.mapToJson(list);
 		 String URI = "/tweets/feed";
 		 
-		 Mockito.when(tweetControllerMock.getFeedTweets(Mockito.any(MockHttpServletRequest.class)))
-			.thenReturn(new ResponseEntity<List<Tweet>>(list, HttpStatus.OK));
+		/*
+		 * Mockito.when(tweetControllerMock.getFeedTweets(Mockito.any(
+		 * MockHttpServletRequest.class))) .thenReturn(new
+		 * ResponseEntity<List<Tweet>>(list, HttpStatus.OK));
+		 */
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).accept(MediaType.APPLICATION_JSON)
 				.contentType(MediaType.APPLICATION_JSON)

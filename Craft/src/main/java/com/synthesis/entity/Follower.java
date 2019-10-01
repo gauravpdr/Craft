@@ -1,36 +1,40 @@
 package com.synthesis.entity;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-
+import javax.persistence.ManyToOne;
 
 @Entity
-public class Follower {
+public class Follower  {
 
 	@Id
-	@GeneratedValue
+	@GeneratedValue(strategy=GenerationType.AUTO)
 	@Column(name = "follower_id")
 	private int id;
-
-	@OneToOne
-	@JoinColumn(name="followed_by")
-	private User followerName;
- 
 	
-	private String following ;
+	@ManyToOne
+	@JoinColumn(name="follower")
+	private User follower;
+
+    
+	@ManyToOne
+	@JoinColumn(name="followed")
+	private User followed;
 
 	public Follower() {
 	}
+	
+	public Follower(User follower, User followed) {
+		
+		this.follower = follower;
+		this.followed = followed;
+	};
 
 	public int getId() {
 		return id;
@@ -67,20 +71,22 @@ public class Follower {
 		return true;
 	}
 
-	public User getFollowerName() {
-		return followerName;
+	public User getFollower() {
+		return follower;
 	}
 
-	public void setFollowerName(User followerName) {
-		this.followerName = followerName;
+	public void setFollower(User follower) {
+		this.follower = follower;
 	}
 
-	public void setFollowing(String following) {
-		this.following = following;
+	public User getFollowed() {
+		return followed;
 	}
 
-	public String getFollowing() {
-		return following;
+	public void setFollowed(User followed) {
+		this.followed = followed;
 	}
+
+	
 
 }

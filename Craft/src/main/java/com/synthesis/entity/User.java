@@ -1,18 +1,16 @@
 package com.synthesis.entity;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.io.Serializable;
+import java.util.Collection;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 
 @Entity
 public class User {
+
+	
 
 	@Id
 	private String userId;
@@ -20,15 +18,14 @@ public class User {
 	private String paswd;
 
 	private String email;
-	
-	
 
+	@OneToMany(mappedBy = "follower")
+	private Collection<Follower> followers;
 	
-	/*
-	 * @OneToMany(mappedBy = "User") private List<Tweet> tweets = new
-	 * ArrayList<Tweet>();
-	 */
-	 
+	
+	@OneToMany(mappedBy = "followed")
+	private Collection<Follower> following;
+	
 
 	public String getUserId() {
 		return userId;
@@ -38,13 +35,7 @@ public class User {
 		this.userId = userId;
 	}
 
-	public String getPassword() {
-		return paswd;
-	}
-
-	public void setPassword(String paswd) {
-		this.paswd = paswd;
-	}
+	
 
 	public String getEmail() {
 		return email;
@@ -62,10 +53,23 @@ public class User {
 		this.paswd = paswd;
 	}
 
-	/*
-	 * public List<Tweet> getTweets() { return tweets; }
-	 * 
-	 * public void setTweets(List<Tweet> tweets) { this.tweets = tweets; }
-	 */
+	public Collection<Follower> getFollowers() {
+		return followers;
+	}
+
+	public void setFollowers(Collection<Follower> followers) {
+		this.followers = followers;
+	}
+
+	public Collection<Follower> getFollowing() {
+		return following;
+	}
+
+	public void setFollowing(Collection<Follower> following) {
+		this.following = following;
+	}
+
+	
+	
 
 }
