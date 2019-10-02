@@ -11,7 +11,7 @@ import com.synthesis.entity.User;
 
 public interface FollowerRepository extends CrudRepository<Follower, Integer> {
 
-	List<Follower> findByFollower(User follower);
+	List<Follower> findByFollowed(User follower);
 
 
 }

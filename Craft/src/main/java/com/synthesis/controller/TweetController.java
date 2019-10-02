@@ -33,7 +33,7 @@ public class TweetController extends BaseController{
 	TweetService service;
 
 	@PostMapping("/postTweet")
-	public ResponseEntity<TweetBean> postTweet(@Valid @RequestBody Tweet tweet, HttpServletRequest request) {
+	public ResponseEntity<String> postTweet(@Valid @RequestBody Tweet tweet, HttpServletRequest request) {
 
 		User user = validateUser(request);
 	
@@ -41,12 +41,7 @@ public class TweetController extends BaseController{
         {
          tweet.setUser(user);
 		Tweet tweetDB = service.postTweet(tweet);
-		TweetBean bean = new TweetBean();
-		bean.setUserId(tweetDB.getUser().getUserId());
-		bean.setTweetText(tweetDB.getTweetText());
-		bean.setCreatedDate(tweetDB.getCreatedDate());
-		
-		return new ResponseEntity<TweetBean>(bean,HttpStatus.OK);
+		return new ResponseEntity<String>("Tweet is posted successfully by User "+tweetDB.getUser().getUserId(),HttpStatus.OK);
         }
         else
         	throw new UserNotFoundException("Invalid User Credentials !! Please contact System Administrator");
@@ -59,7 +54,7 @@ public class TweetController extends BaseController{
 		if (null != user) {
 			List<Tweet> list = service.getTweetsList(user);
 			if (null != list && !list.isEmpty()) {
-				List<TweetBean> tweetBeanList = convertTweetEntityToBean(list);
+				List<TweetBean> tweetBeanList = convertTweetEntityListToBean(list);
 				return new ResponseEntity<>(tweetBeanList, HttpStatus.OK);
 			} else
 				throw new TweetNotFoundException("No such tweet Found in System for user " + user.getUserId());
@@ -81,40 +76,32 @@ public class TweetController extends BaseController{
 
 		User user = validateUser(request);
 		if (null != user) {
-			
-			List<TweetBean> list = new ArrayList<TweetBean>();
-			
+
+			List<TweetBean> list = null;
+
 			List<Tweet> latestTweets = service.getFeedTweets(user);
-			if (null != latestTweets && latestTweets.size() > 0)
-			{
-				for(Tweet tweet : latestTweets) 
-				{
-					    TweetBean bean = new TweetBean();
-					    bean.setTweetText(tweet.getTweetText());
-					    bean.setCreatedDate(tweet.getCreatedDate());
-					    bean.setUserId(tweet.getUser().getUserId());
-					    list.add(bean);
-					    
-				}
-				
+
+			if (null != latestTweets && latestTweets.size() > 0) {
+				list = new ArrayList<TweetBean>();
+				list = convertTweetEntityListToBean(latestTweets);
+
 				return new ResponseEntity<List<TweetBean>>(list, HttpStatus.OK);
-			}
-			else
-				throw new TweetNotFoundException(
-						"No such tweet/feed Found in System for user " + user.getUserId());
+			} else
+				throw new TweetNotFoundException("No such tweet/feed Found in System for user " + user.getUserId());
 		} else {
 			throw new UserNotFoundException("Invalid User !! Please contact System Administrator");
 		}
 
 	}
 	
-	private List<TweetBean> convertTweetEntityToBean(List<Tweet> inputList )
+	private List<TweetBean> convertTweetEntityListToBean(List<Tweet> inputList )
 	{
 		List<TweetBean> list = new ArrayList<TweetBean>();
 
 		if (null != inputList && inputList.size() > 0) {
 			for (Tweet tweet : inputList) {
 				TweetBean bean = new TweetBean();
+				bean.setTweetId(tweet.getTweetId());
 				bean.setTweetText(tweet.getTweetText());
 				bean.setCreatedDate(tweet.getCreatedDate());
 				bean.setUserId(tweet.getUser().getUserId());
@@ -124,6 +111,19 @@ public class TweetController extends BaseController{
 
 		}
 		return list;
+
+	} 
+	
+	private TweetBean convertTweetEntityToBean(Tweet inputTweet )
+	{
+
+		TweetBean bean = new TweetBean();
+		bean.setTweetText(inputTweet.getTweetText());
+		bean.setCreatedDate(inputTweet.getCreatedDate());
+		bean.setUserId(inputTweet.getUser().getUserId());
+		bean.setTweetId(inputTweet.getTweetId());
+
+		return bean;
 
 	} 
 

@@ -59,9 +59,13 @@ public class TestTweetController {
 	@Test
 	public void testPostTweet() throws Exception {
 
-		TweetBean mockTweet = new TweetBean();
+		User user = new User();
+		user.setUserId("U1");
+		
+		Tweet mockTweet = new Tweet();
 		mockTweet.setTweetId(1);
 		mockTweet.setTweetText("hello");
+		mockTweet.setUser(user);
 		MockHttpServletRequest mockHttpRequest = new MockHttpServletRequest();
 		mockHttpRequest.addHeader("Authorization", "Basic VTE6MTIzNA==");
 
@@ -70,8 +74,11 @@ public class TestTweetController {
 		String inputInJson = this.mapToJson(mockTweet);
 		String URI = "/tweets/postTweet";
 
-		Mockito.when(tweetControllerMock.postTweet(Mockito.any(Tweet.class), Mockito.any(MockHttpServletRequest.class)))
-				.thenReturn(new ResponseEntity<TweetBean>( mockTweet,HttpStatus.OK));
+		
+		  Mockito.when(tweetControllerMock.postTweet(Mockito.any(Tweet.class),
+		  Mockito.any(MockHttpServletRequest.class))) .thenReturn(new
+		  ResponseEntity<String>("Tweet is posted successfully by User "+mockTweet.getUser().getUserId(),HttpStatus.OK));
+		 
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.post(URI).accept(MediaType.APPLICATION_JSON)
 				.content(inputInJson).contentType(MediaType.APPLICATION_JSON)

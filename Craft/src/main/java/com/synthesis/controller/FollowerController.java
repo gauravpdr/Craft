@@ -1,6 +1,5 @@
 package com.synthesis.controller;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,10 +21,8 @@ import com.synthesis.exception.FollowingNotFoundException;
 import com.synthesis.exception.UserNotFoundException;
 import com.synthesis.service.FollowerService;
 
-
 /**
- * @author 
- * Gaurav Pidyar Controller class for handling all the requests related
+ * @author Gaurav Pidyar Controller class for handling all the requests related
  *         to modification of the following list of a follower or user
  */
 
@@ -35,20 +32,17 @@ public class FollowerController extends BaseController {
 
 	@Autowired
 	FollowerService followerService;
-	
-	
-
 
 	@PutMapping(value = "/follower", produces = "application/json")
-	public ResponseEntity<Follower> addToFollowingList(@Valid @RequestBody Follower follower,
+	public ResponseEntity<String> addToFollowingList(@Valid @RequestBody Follower follower,
 			HttpServletRequest request) {
 
 		User validatedUser = validateUser(request);
 		if (null != validatedUser) {
 
-			//follower.setFollower(validatedUser);
 			Follower updatedfollower = followerService.updateFollower(follower);
-			return new ResponseEntity<Follower>(updatedfollower, HttpStatus.OK);
+			return new ResponseEntity<String>(follower.getFollower().getUserId() + " is now following "
+					+ updatedfollower.getFollowed().getUserId(), HttpStatus.OK);
 		} else {
 			throw new UserNotFoundException("Invalid User !! Please contact System Administrator");
 		}
@@ -56,7 +50,7 @@ public class FollowerController extends BaseController {
 	}
 
 	@GetMapping("")
-	public ResponseEntity<List<String>> getFollowingList(HttpServletRequest request) {
+	public ResponseEntity<String> getFollowingList(HttpServletRequest request) {
 
 		List<String> followingList = null;
 		User user = validateUser(request);
@@ -65,10 +59,10 @@ public class FollowerController extends BaseController {
 			if (null != list && list.size() > 0) {
 				followingList = new ArrayList<String>();
 				for (Follower follower : list) {
-					followingList.add(follower.getFollowed().getUserId());
+					followingList.add(follower.getFollower().getUserId());
 				}
 
-				return new ResponseEntity<List<String>>(followingList, HttpStatus.OK);
+				return new ResponseEntity<String>(user.getUserId() + " is followed by " + followingList, HttpStatus.OK);
 			} else
 				throw new FollowingNotFoundException("No Following exist for follower " + user.getUserId());
 
@@ -76,7 +70,5 @@ public class FollowerController extends BaseController {
 		throw new UserNotFoundException("Invalid User !! Please contact System Administrator");
 
 	}
-	
-	 
 
 }

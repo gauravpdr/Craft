@@ -45,26 +45,23 @@ public class TestFollowerController {
 
 		User followerUser = new User();
 		followerUser.setUserId("U1");
-		
+
 		User followingUser = new User();
 		followingUser.setUserId("U3");
-		
+
 		Follower mockFollower = new Follower();
 		mockFollower.setFollower(followerUser);
 		mockFollower.setFollowed(followingUser);
 		MockHttpServletRequest mockHttpRequest = new MockHttpServletRequest();
 		mockHttpRequest.addHeader("Authorization", "Basic VTE6MTIzNA==");
 
-		
-
 		String inputInJson = this.mapToJson(mockFollower);
 		String URI = "/followers/follower";
 
-		
-		  Mockito.when(followerControllerMock.addToFollowingList(Mockito.any(Follower.
-		  class), Mockito.any(MockHttpServletRequest.class))) .thenReturn(new
-		  ResponseEntity<Follower>(mockFollower, HttpStatus.OK));
-		 
+		Mockito.when(followerControllerMock.addToFollowingList(Mockito.any(Follower.class),
+				Mockito.any(MockHttpServletRequest.class)))
+				.thenReturn(new ResponseEntity<String>(mockFollower.getFollower().getUserId() + " is now follwing "
+						+ mockFollower.getFollowed().getUserId(), HttpStatus.OK));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.put(URI).content(inputInJson)
 				.contentType(MediaType.APPLICATION_JSON).header("Authorization", "Basic VTE6MTIzNA==");
@@ -84,7 +81,7 @@ public class TestFollowerController {
 
 		User followerUser = new User();
 		followerUser.setUserId("U1");
-		
+
 		User followingUser = new User();
 		followingUser.setUserId("U3");
 		Follower mockFollower = new Follower();
@@ -96,12 +93,12 @@ public class TestFollowerController {
 		// mockTweet.setCreatedBy("gaurav");
 
 		List<String> list = new ArrayList<String>();
-		list.add("U3");
+		list.add("U1");
 		String inputInJson = this.mapToJson(list);
 		String URI = "/followers";
 
-		Mockito.when(followerControllerMock.getFollowingList(Mockito.any(MockHttpServletRequest.class)))
-				.thenReturn(new ResponseEntity<List<String>>(list, HttpStatus.OK));
+		Mockito.when(followerControllerMock.getFollowingList(Mockito.any(MockHttpServletRequest.class))).thenReturn(
+				new ResponseEntity<String>(mockFollower.getFollowed() + " is followed by " + list, HttpStatus.OK));
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).contentType(MediaType.APPLICATION_JSON)
 				.header("Authorization", "Basic VTE6MTIzNA==");
