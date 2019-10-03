@@ -64,7 +64,7 @@ public class FollowerController extends BaseController {
 
 				return new ResponseEntity<String>(user.getUserId() + " is followed by " + followingList, HttpStatus.OK);
 			} else
-				throw new FollowingNotFoundException("No Following exist for follower " + user.getUserId());
+				throw new FollowingNotFoundException("No Follower exist for User " + user.getUserId());
 
 		}
 		throw new UserNotFoundException("Invalid User !! Please contact System Administrator");

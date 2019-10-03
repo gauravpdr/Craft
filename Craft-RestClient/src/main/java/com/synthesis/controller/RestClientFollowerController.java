@@ -9,6 +9,8 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,13 +39,13 @@ public class RestClientFollowerController {
 
 	}
 	
-	@PutMapping("/follower")
-	public String getFollower(HttpServletRequest request) {
+	@GetMapping("/follower")
+	public ResponseEntity<String> getFollower(HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", request.getHeader("Authorization"));
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<Follower> entity = new HttpEntity<Follower>(headers);
-		return restTemplate.exchange(URI_GET_FOLLOWER, HttpMethod.GET, entity, String.class).getBody();
+		return restTemplate.exchange(URI_GET_FOLLOWER, HttpMethod.GET, entity, String.class);
 
 	}
 
