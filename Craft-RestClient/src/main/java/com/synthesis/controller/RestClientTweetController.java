@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -17,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.client.HttpStatusCodeException;
 import org.springframework.web.client.RestTemplate;
 
 import com.synthesis.model.Tweet;
@@ -39,18 +41,27 @@ public class RestClientTweetController {
 		HttpHeaders headers = new HttpHeaders();
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<Tweet> entity = new HttpEntity<Tweet>(headers);
-		return restTemplate.exchange(URI_DELETE_TWEET + id, HttpMethod.DELETE, entity, String.class).getBody();
+		try {
+			return restTemplate.exchange(URI_DELETE_TWEET + id, HttpMethod.DELETE, entity, String.class).getBody();
+		} catch (HttpStatusCodeException e) {
 
+			return e.getResponseBodyAsString();
+
+		}
 	}
 
 	@PostMapping("/postTweet")
-	public String postTweet(@RequestBody Tweet tweet , HttpServletRequest request) {
+	public String postTweet(@RequestBody Tweet tweet, HttpServletRequest request) {
 		HttpHeaders headers = new HttpHeaders();
 		headers.add("Authorization", request.getHeader("Authorization"));
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<Tweet> entity = new HttpEntity<Tweet>(tweet, headers);
-		return restTemplate.exchange(URI_CREATE_TWEET, HttpMethod.POST, entity, String.class).getBody();
+		try {
+			return restTemplate.exchange(URI_CREATE_TWEET, HttpMethod.POST, entity, String.class).getBody();
+		} catch (HttpStatusCodeException e) {
+			return e.getResponseBodyAsString();
 
+		}
 	}
 
 	@GetMapping("")
@@ -59,8 +70,16 @@ public class RestClientTweetController {
 		headers.add("Authorization", request.getHeader("Authorization"));
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<Tweet> entity = new HttpEntity<Tweet>(headers);
-		return restTemplate.exchange(URI_GET_TWEETS, HttpMethod.GET, entity, Object.class);
+		try {
+			return restTemplate.exchange(URI_GET_TWEETS, HttpMethod.GET, entity, Object.class);
+		} catch (HttpStatusCodeException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND)
+				return new ResponseEntity<Object>(e.getResponseBodyAsString(), HttpStatus.NOT_FOUND);
+			else {
+				return new ResponseEntity<Object>(e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
 
+		}
 	}
 
 	@GetMapping("/feed")
@@ -70,7 +89,16 @@ public class RestClientTweetController {
 		headers.add("Authorization", request.getHeader("Authorization"));
 		headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
 		HttpEntity<Tweet> entity = new HttpEntity<Tweet>(headers);
-		return restTemplate.exchange(URI_TWEET_FEED, HttpMethod.GET, entity, Object.class);
+		try {
+			return restTemplate.exchange(URI_TWEET_FEED, HttpMethod.GET, entity, Object.class);
+		} catch (HttpStatusCodeException e) {
+			if (e.getStatusCode() == HttpStatus.NOT_FOUND)
+				return new ResponseEntity<Object>(e.getResponseBodyAsString(), HttpStatus.NOT_FOUND);
+			else {
+				return new ResponseEntity<Object>(e.getResponseBodyAsString(), HttpStatus.INTERNAL_SERVER_ERROR);
+			}
+
+		}
 
 	}
 
