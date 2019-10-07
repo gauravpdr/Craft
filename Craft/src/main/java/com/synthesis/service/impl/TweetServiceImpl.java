@@ -35,10 +35,12 @@ public class TweetServiceImpl implements TweetService {
 	}
 
 	@Override
-	public void deleteTweet(int id) {
+	public String deleteTweet(int id) {
 		Tweet t = new Tweet();
 		t.setTweetId(id);
 		repository.deleteById(id);
+		System.out.println("Tweet"+id+"deleted successfully");
+		return "Tweet"+id+"deleted successfully";
 
 	}
 

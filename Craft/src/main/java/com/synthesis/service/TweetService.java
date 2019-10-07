@@ -11,7 +11,7 @@ public interface TweetService {
 
 	public List<Tweet> getTweetsList(User user);
 
-	public void deleteTweet(int tweetId);
+	public String deleteTweet(int tweetId);
 
 	List<Tweet> getFeedTweets(User user);
 

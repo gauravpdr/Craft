@@ -18,7 +18,7 @@ public class BaseController {
 @Autowired	
 UserService service;
 
-protected User validateUser(HttpServletRequest request) {
+public User validateUser(HttpServletRequest request) {
 	final String authorization = request.getHeader("Authorization");
 	String[] values = null;
 	if (authorization != null && authorization.toLowerCase().startsWith("basic")) {

@@ -2,23 +2,22 @@ package com.synthesis.main.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.mock.web.MockHttpServletResponse;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.RequestBuilder;
@@ -29,6 +28,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.synthesis.controller.FollowerController;
 import com.synthesis.entity.Follower;
 import com.synthesis.entity.User;
+import com.synthesis.service.FollowerService;
+import com.synthesis.service.UserService;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @WebMvcTest(value = FollowerController.class, secure = false)
@@ -38,7 +39,10 @@ public class TestFollowerController {
 	private MockMvc mockMvc;
 
 	@MockBean
-	private FollowerController followerControllerMock;
+	private FollowerService followerService;
+	
+	@MockBean
+	private UserService userService;
 
 	@Test
 	public void testAddToFollowingList() throws Exception {
@@ -56,12 +60,13 @@ public class TestFollowerController {
 		mockHttpRequest.addHeader("Authorization", "Basic VTE6MTIzNA==");
 
 		String inputInJson = this.mapToJson(mockFollower);
+		String expectedJson = mockFollower.getFollower().getUserId() + " is now following "
+				+ mockFollower.getFollowed().getUserId();
+		
 		String URI = "/followers/follower";
 
-		Mockito.when(followerControllerMock.addToFollowingList(Mockito.any(Follower.class),
-				Mockito.any(MockHttpServletRequest.class)))
-				.thenReturn(new ResponseEntity<String>(mockFollower.getFollower().getUserId() + " is now follwing "
-						+ mockFollower.getFollowed().getUserId(), HttpStatus.OK));
+		when(userService.validateUser(any(), any())).thenReturn(followerUser);
+		when(followerService.updateFollower(any(Follower.class))).thenReturn(mockFollower);
 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.put(URI).content(inputInJson)
 				.contentType(MediaType.APPLICATION_JSON).header("Authorization", "Basic VTE6MTIzNA==");
@@ -71,7 +76,7 @@ public class TestFollowerController {
 
 		String outputInJson = response.getContentAsString();
 
-		assertThat(outputInJson).isEqualTo(inputInJson);
+		assertThat(outputInJson).isEqualTo(expectedJson);
 		assertEquals(HttpStatus.OK.value(), response.getStatus());
 
 	}
@@ -87,28 +92,28 @@ public class TestFollowerController {
 		Follower mockFollower = new Follower();
 		mockFollower.setFollower(followerUser);
 		mockFollower.setFollowed(followingUser);
-		MockHttpServletRequest mockHttpRequest = new MockHttpServletRequest();
-		mockHttpRequest.addHeader("Authorization", "Basic VTE6MTIzNA==");
+		
 
-		// mockTweet.setCreatedBy("gaurav");
-
-		List<String> list = new ArrayList<String>();
-		list.add("U1");
-		String inputInJson = this.mapToJson(list);
+		List<Follower> list = new ArrayList<Follower>();
+		list.add(mockFollower);
+		
+		List<String> listFollower = new ArrayList<String>();
+		listFollower.add(mockFollower.getFollower().getUserId());
 		String URI = "/followers";
 
-		Mockito.when(followerControllerMock.getFollowingList(Mockito.any(MockHttpServletRequest.class))).thenReturn(
-				new ResponseEntity<String>(mockFollower.getFollowed() + " is followed by " + list, HttpStatus.OK));
-
+		String expectedOutput=mockFollower.getFollowed().getUserId() +" is followed by "+listFollower;
+		when(userService.validateUser(any(), any())).thenReturn(followingUser);
+		when(followerService.getListOfFollowing(any())).thenReturn(list);
+		 
 		RequestBuilder requestBuilder = MockMvcRequestBuilders.get(URI).contentType(MediaType.APPLICATION_JSON)
-				.header("Authorization", "Basic VTE6MTIzNA==");
+				.header("Authorization", "Basic VTM6MTIzNA==");
 
 		MvcResult result = mockMvc.perform(requestBuilder).andReturn();
 		MockHttpServletResponse response = result.getResponse();
 
 		String outputInJson = response.getContentAsString();
 
-		assertThat(outputInJson).isEqualTo(inputInJson);
+		assertThat(outputInJson).isEqualTo(expectedOutput);
 		assertEquals(HttpStatus.OK.value(), response.getStatus());
 
 	}

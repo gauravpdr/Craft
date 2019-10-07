@@ -1,6 +1,5 @@
 package com.synthesis.controller;
 
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,27 +23,30 @@ import com.synthesis.entity.User;
 import com.synthesis.exception.TweetNotFoundException;
 import com.synthesis.exception.UserNotFoundException;
 import com.synthesis.service.TweetService;
+import com.synthesis.service.UserService;
 
 @RestController
 @RequestMapping("/tweets")
-public class TweetController extends BaseController{
+public class TweetController extends BaseController {
 
 	@Autowired
 	TweetService service;
+
+	@Autowired
+	UserService userService;
 
 	@PostMapping("/postTweet")
 	public ResponseEntity<String> postTweet(@Valid @RequestBody Tweet tweet, HttpServletRequest request) {
 
 		User user = validateUser(request);
-	
-        if(null!=user)
-        {
-         tweet.setUser(user);
-		Tweet tweetDB = service.postTweet(tweet);
-		return new ResponseEntity<String>("Tweet is posted successfully by User "+tweetDB.getUser().getUserId(),HttpStatus.OK);
-        }
-        else
-        	throw new UserNotFoundException("Invalid User Credentials !! Please contact System Administrator");
+
+		if (null != user) {
+			tweet.setUser(user);
+			Tweet tweetDB = service.postTweet(tweet);
+			return new ResponseEntity<String>("Tweet is posted successfully by User " + tweetDB.getUser().getUserId(),
+					HttpStatus.OK);
+		} else
+			throw new UserNotFoundException("Invalid User Credentials !! Please contact System Administrator");
 	}
 
 	@GetMapping("")
@@ -65,9 +67,9 @@ public class TweetController extends BaseController{
 
 	@DeleteMapping("/{id}")
 	public ResponseEntity<Object> deleteTweet(@PathVariable("id") int tweetId) {
-         
+
 		service.deleteTweet(tweetId);
-		return new ResponseEntity<Object>("Tweet "+tweetId+" deleted successfully", HttpStatus.OK);
+		return new ResponseEntity<Object>("Tweet " + tweetId + " deleted successfully", HttpStatus.OK);
 
 	}
 
@@ -93,9 +95,8 @@ public class TweetController extends BaseController{
 		}
 
 	}
-	
-	private List<TweetBean> convertTweetEntityListToBean(List<Tweet> inputList )
-	{
+
+	private List<TweetBean> convertTweetEntityListToBean(List<Tweet> inputList) {
 		List<TweetBean> list = new ArrayList<TweetBean>();
 
 		if (null != inputList && inputList.size() > 0) {
@@ -103,8 +104,10 @@ public class TweetController extends BaseController{
 				TweetBean bean = new TweetBean();
 				bean.setTweetId(tweet.getTweetId());
 				bean.setTweetText(tweet.getTweetText());
-				bean.setCreatedDate(tweet.getCreatedDate());
-				bean.setUserId(tweet.getUser().getUserId());
+				if (null != tweet.getCreatedDate()) {
+					bean.setCreatedDate(tweet.getCreatedDate());
+				}
+				bean.setUser(tweet.getUser());
 				list.add(bean);
 
 			}
@@ -112,22 +115,6 @@ public class TweetController extends BaseController{
 		}
 		return list;
 
-	} 
-	
-	private TweetBean convertTweetEntityToBean(Tweet inputTweet )
-	{
-
-		TweetBean bean = new TweetBean();
-		bean.setTweetText(inputTweet.getTweetText());
-		bean.setCreatedDate(inputTweet.getCreatedDate());
-		bean.setUserId(inputTweet.getUser().getUserId());
-		bean.setTweetId(inputTweet.getTweetId());
-
-		return bean;
-
-	} 
-
-
-	
+	}
 
 }

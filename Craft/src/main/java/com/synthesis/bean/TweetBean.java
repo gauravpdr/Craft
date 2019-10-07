@@ -2,12 +2,14 @@ package com.synthesis.bean;
 
 import java.util.Date;
 
+import com.synthesis.entity.User;
+
 public class TweetBean {
 	
 	private int tweetId;
 	private String tweetText;
 	private Date createdDate;
-	private String userId;
+	private User user;
 	
 	public String getTweetText() {
 		return tweetText;
@@ -21,11 +23,11 @@ public class TweetBean {
 	public void setCreatedDate(Date createdDate) {
 		this.createdDate = createdDate;
 	}
-	public String getUserId() {
-		return userId;
+	public User getUser() {
+		return user;
 	}
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setUser(User user) {
+		this.user = user;
 	}
 	public int getTweetId() {
 		return tweetId;
