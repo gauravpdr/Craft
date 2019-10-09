@@ -55,7 +55,7 @@ public class FollowerController extends BaseController {
 		List<String> followingList = null;
 		User user = validateUser(request);
 		if (null != user) {
-			List<Follower> list = followerService.getListOfFollowing(user);
+			List<Follower> list = followerService.getListOfFollowers(user);
 			if (null != list && list.size() > 0) {
 				followingList = new ArrayList<String>();
 				for (Follower follower : list) {

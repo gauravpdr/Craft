@@ -10,5 +10,7 @@ public interface FollowerService {
 	public Follower  updateFollower(Follower follower);
 
 	 public List<Follower> getListOfFollowing(User user); 
+	 
+	 public List<Follower> getListOfFollowers(User user);
 
 }

@@ -2,6 +2,7 @@ package com.synthesis.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.Callable;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -107,7 +108,7 @@ public class TweetController extends BaseController {
 				if (null != tweet.getCreatedDate()) {
 					bean.setCreatedDate(tweet.getCreatedDate());
 				}
-				bean.setUser(tweet.getUser());
+			   bean.setUserId(tweet.getUser().getUserId());
 				list.add(bean);
 
 			}
@@ -116,5 +117,7 @@ public class TweetController extends BaseController {
 		return list;
 
 	}
+	
+
 
 }

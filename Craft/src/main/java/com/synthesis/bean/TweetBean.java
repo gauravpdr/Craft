@@ -10,6 +10,7 @@ public class TweetBean {
 	private String tweetText;
 	private Date createdDate;
 	private User user;
+	private String userId;
 	
 	public String getTweetText() {
 		return tweetText;
@@ -34,6 +35,12 @@ public class TweetBean {
 	}
 	public void setTweetId(int tweetId) {
 		this.tweetId = tweetId;
+	}
+	public String getUserId() {
+		return userId;
+	}
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 
 }

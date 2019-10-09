@@ -30,8 +30,15 @@ public class FollowerServiceImpl implements FollowerService {
 	  @Override
 	public List<Follower> getListOfFollowing(User followerName) {
 
-		  return repository.findByFollowed(followerName);
+		  return repository.findByFollower(followerName);
 		
+	}
+	  
+	  @Override
+	public List<Follower> getListOfFollowers(User followerName) {
+
+			  return repository.findByFollowed(followerName);
+			
 	}
 	 
 }
